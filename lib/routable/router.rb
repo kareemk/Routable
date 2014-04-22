@@ -218,8 +218,7 @@ module Routable
 
       open_options = options_for_url(url)
       open_params = open_options[:open_params]
-      open_klass = open_options[:klass]
-      controller = open_klass.alloc
+      controller = open_options[:klass].is_a?(Proc) ? open_options[:klass].call : open_options[:klass].alloc
       if controller.respond_to? :initWithParams
         controller = controller.initWithParams(open_params)
       else
