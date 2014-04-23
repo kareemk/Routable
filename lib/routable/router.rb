@@ -121,7 +121,7 @@ module Routable
       if controller_options[:resets]
         navigation_controller.setViewControllers([controller], animated: animated)
       elsif controller_options[:modal]
-        if controller.class == UINavigationController
+        if controller.is_a? UINavigationController
           self.navigation_controller.presentModalViewController(controller, animated: animated)
         else
           tempNavigationController = UINavigationController.alloc.init
