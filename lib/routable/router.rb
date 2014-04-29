@@ -24,6 +24,7 @@ module Routable
 
     # The root UINavigationController we use to push/pop view controllers
     attr_accessor :navigation_controller
+    attr_accessor :default_navigation_controller_class
 
     # Hash of URL => UIViewController classes
     # EX
@@ -124,7 +125,7 @@ module Routable
         if controller.is_a? UINavigationController
           self.navigation_controller.presentModalViewController(controller, animated: animated)
         else
-          tempNavigationController = UINavigationController.alloc.init
+          tempNavigationController = (self.default_navigation_controller_class || UINavigationController).alloc.init
           tempNavigationController.pushViewController(controller, animated: false)
           tempNavigationController.modalTransitionStyle = controller.modalTransitionStyle
           tempNavigationController.modalPresentationStyle = controller.modalPresentationStyle
