@@ -107,19 +107,19 @@ module Routable
         block.call(controller)
       end
 
-      if self.navigation_controller.modalViewController
-        dismiss_animated = animated
+      if controller_options[:resets]
+        if self.navigation_controller.modalViewController
+          dismiss_animated = animated
 
-        # Can't dismiss and present two controllers animated at the same time,
-        # so we just dismiss the current one without an animation
-        if controller_options[:modal] && dismiss_animated
-          dismiss_animated = false
+          # Can't dismiss and present two controllers animated at the same time,
+          # so we just dismiss the current one without an animation
+          if controller_options[:modal] && dismiss_animated
+            dismiss_animated = false
+          end
+
+          self.navigation_controller.dismissModalViewControllerAnimated(dismiss_animated)
         end
 
-        self.navigation_controller.dismissModalViewControllerAnimated(dismiss_animated)
-      end
-
-      if controller_options[:resets]
         navigation_controller.setViewControllers([controller], animated: animated)
       elsif controller_options[:modal]
         if controller.is_a? UINavigationController
@@ -135,7 +135,11 @@ module Routable
         if self.navigation_controller.viewControllers.member? controller
           self.navigation_controller.popToViewController(controller, animated:animated)
         else
-          self.navigation_controller.pushViewController(controller, animated:animated)
+          if self.navigation_controller.modalViewController
+            self.navigation_controller.modalViewController.pushViewController(controller, animated:animated)
+          else
+            self.navigation_controller.pushViewController(controller, animated:animated)
+          end
         end
       end
     end
