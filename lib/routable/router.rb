@@ -122,14 +122,14 @@ module Routable
 
         navigation_controller.setViewControllers([controller], animated: animated)
       elsif controller_options[:modal]
-        if controller.is_a? UINavigationController
-          self.navigation_controller.presentModalViewController(controller, animated: animated)
-        else
-          tempNavigationController = (self.default_navigation_controller_class || UINavigationController).alloc.init
+        if nav = controller_options[:nav]
+          tempNavigationController = nav.alloc.init
           tempNavigationController.pushViewController(controller, animated: false)
           tempNavigationController.modalTransitionStyle = controller.modalTransitionStyle
           tempNavigationController.modalPresentationStyle = controller.modalPresentationStyle
           self.navigation_controller.presentModalViewController(tempNavigationController, animated: animated)
+        else
+          self.navigation_controller.presentModalViewController(controller, animated: animated)
         end
       else
         if self.navigation_controller.viewControllers.member? controller
