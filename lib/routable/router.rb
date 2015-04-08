@@ -131,6 +131,13 @@ module Routable
         else
           self.navigation_controller.presentModalViewController(controller, animated: animated)
         end
+      elsif controller_options[:reset]
+        if self.navigation_controller.topViewController.class == controller.class
+          controllers = self.navigation_controller.viewControllers[0...-1] + [controller]
+          self.navigation_controller.setViewControllers(controllers, animated:animated)
+        else
+          self.navigation_controller.pushViewController(controller, animated:animated)
+        end
       else
         if self.navigation_controller.viewControllers.member? controller
           self.navigation_controller.popToViewController(controller, animated:animated)
