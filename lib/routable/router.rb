@@ -25,6 +25,7 @@ module Routable
     # The root UINavigationController we use to push/pop view controllers
     attr_accessor :navigation_controller
     attr_accessor :default_navigation_controller_class
+    attr_accessor :root_controller_class
 
     # Hash of URL => UIViewController classes
     # EX
@@ -136,7 +137,12 @@ module Routable
           controllers = self.navigation_controller.viewControllers[0...-1] + [controller]
           self.navigation_controller.setViewControllers(controllers, animated:animated)
         else
-          self.navigation_controller.pushViewController(controller, animated:animated)
+          if self.navigation_controller.viewControllers.empty?
+            self.navigation_controller.setViewControllers([self.root_controller_class.alloc.init, controller], animated:animated)
+
+          else
+            self.navigation_controller.pushViewController(controller, animated:animated)
+          end
         end
       else
         if self.navigation_controller.viewControllers.member? controller
@@ -145,7 +151,12 @@ module Routable
           if self.navigation_controller.modalViewController
             self.navigation_controller.modalViewController.pushViewController(controller, animated:animated)
           else
-            self.navigation_controller.pushViewController(controller, animated:animated)
+            if self.navigation_controller.viewControllers.empty?
+              self.navigation_controller.setViewControllers([self.root_controller_class.alloc.init, controller], animated:animated)
+
+            else
+              self.navigation_controller.pushViewController(controller, animated:animated)
+            end
           end
         end
       end
