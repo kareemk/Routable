@@ -86,6 +86,8 @@ module Routable
     # router.open("users/3")
     # => router.navigation_controller pushes a UsersController
     def open(url, animated = true, &block)
+      return false if self.navigation_controller.modalViewController
+
       controller_options = options_for_url(url)
 
       if controller_options[:callback]
@@ -109,18 +111,6 @@ module Routable
       end
 
       if controller_options[:resets]
-        if self.navigation_controller.modalViewController
-          dismiss_animated = animated
-
-          # Can't dismiss and present two controllers animated at the same time,
-          # so we just dismiss the current one without an animation
-          if controller_options[:modal] && dismiss_animated
-            dismiss_animated = false
-          end
-
-          self.navigation_controller.dismissModalViewControllerAnimated(dismiss_animated)
-        end
-
         navigation_controller.setViewControllers([controller], animated: animated)
       elsif controller_options[:modal]
         if nav = controller_options[:nav]
@@ -148,15 +138,11 @@ module Routable
         if self.navigation_controller.viewControllers.member? controller
           self.navigation_controller.popToViewController(controller, animated:animated)
         else
-          if self.navigation_controller.modalViewController
-            self.navigation_controller.modalViewController.pushViewController(controller, animated:animated)
-          else
-            if self.navigation_controller.viewControllers.empty?
-              self.navigation_controller.setViewControllers([self.root_controller_class.alloc.init, controller], animated:animated)
+          if self.navigation_controller.viewControllers.empty?
+            self.navigation_controller.setViewControllers([self.root_controller_class.alloc.init, controller], animated:animated)
 
-            else
-              self.navigation_controller.pushViewController(controller, animated:animated)
-            end
+          else
+            self.navigation_controller.pushViewController(controller, animated:animated)
           end
         end
       end
