@@ -146,6 +146,7 @@ module Routable
           end
         end
       end
+      controller
     end
 
     # Pop the top level UIViewController
