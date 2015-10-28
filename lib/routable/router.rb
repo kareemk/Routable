@@ -152,9 +152,9 @@ module Routable
     # Pop the top level UIViewController
     # EX
     # router.pop
-    def pop(animated = true)
+    def pop(animated = true, completion=nil)
       if self.navigation_controller.modalViewController
-        self.navigation_controller.dismissModalViewControllerAnimated(animated)
+        self.navigation_controller.dismissViewControllerAnimated(animated, completion: completion)
       else
         self.navigation_controller.popViewControllerAnimated(animated)
       end
